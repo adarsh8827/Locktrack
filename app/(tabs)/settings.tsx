@@ -26,6 +26,7 @@ export default function SettingsScreen() {
           onPress: async () => {
             try {
               await signOut();
+              router.replace('/signoutin');
               Alert.alert('Success', 'You have been signed out successfully.', [{ text: 'OK' }]);
             } catch (error) {
               console.error('Sign out error:', error);

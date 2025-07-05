@@ -12,6 +12,7 @@ import {
 import { LogIn, Mail, Lock, Eye, EyeOff, Sparkles, Building2, Crown, Shield, Users } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAuth } from '@/contexts/AuthContext';
+import { router } from 'expo-router';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -50,7 +51,8 @@ export default function LoginScreen() {
     setLoading(true);
     try {
       await signIn(email.trim().toLowerCase(), password);
-      Alert.alert('Success', 'Login successful! Welcome back.', [{ text: 'OK' }]);
+      // Navigate to dashboard after successful login
+      router.replace('/');
     } catch (error: any) {
       Alert.alert('Login Failed', error.message || 'Invalid credentials. Please try again.', [{ text: 'OK' }]);
     } finally {

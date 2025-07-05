@@ -75,7 +75,8 @@ export default function DashboardScreen() {
           onPress: async () => {
             try {
               await signOut();
-              Alert.alert('Success', 'You have been signed out successfully.', [{ text: 'OK' }]);
+              router.replace('/signoutin');
+              // Alert.alert('Success', 'You have been signed out successfully.', [{ text: 'OK' }]);
             } catch (error) {
               console.error('Sign out error:', error);
               Alert.alert('Error', 'Failed to sign out. Please try again.', [{ text: 'OK' }]);
