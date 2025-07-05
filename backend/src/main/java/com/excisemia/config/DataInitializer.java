@@ -54,12 +54,12 @@ public class DataInitializer implements CommandLineRunner {
         }
 
         try {
-            createVendors();
-            createUsers();
-            createLocks();
-            createSchedules();
-            createTrips();
-            createRemarks();
+//            createVendors();
+//            createUsers();
+//            createLocks();
+//            createSchedules();
+//            createTrips();
+//            createRemarks();
             logger.info("Database initialization completed successfully!");
         } catch (Exception e) {
             logger.error("Error during database initialization: ", e);
@@ -163,30 +163,30 @@ public class DataInitializer implements CommandLineRunner {
         Vendor xyzLogistics = vendorRepository.findByVendorCode("XYZ002").orElseThrow();
         Vendor globalFreight = vendorRepository.findByVendorCode("GFS003").orElseThrow();
 
-        User abcTracking = userRepository.findByEmailAndVendorId("tracking@abctransport.com", abcTransport.getId()).orElseThrow();
-        User abcDriver = userRepository.findByEmailAndVendorId("driver1@abctransport.com", abcTransport.getId()).orElseThrow();
-        User xyzTracking = userRepository.findByEmailAndVendorId("tracking@xyzlogistics.com", xyzLogistics.getId()).orElseThrow();
-        User xyzDriver = userRepository.findByEmailAndVendorId("driver1@xyzlogistics.com", xyzLogistics.getId()).orElseThrow();
-        User gfsTracking = userRepository.findByEmailAndVendorId("tracking@globalfreight.com", globalFreight.getId()).orElseThrow();
+//        Vendor abcTracking = userRepository.findByEmailAndVendorId("tracking@abctransport.com", abcTransport.getId()).orElseThrow();
+//        Vendor abcDriver = userRepository.findByEmailAndVendorId("driver1@abctransport.com", abcTransport.getId()).orElseThrow();
+//        Vendor xyzTracking = userRepository.findByEmailAndVendorId("tracking@xyzlogistics.com", xyzLogistics.getId()).orElseThrow();
+//        Vendor xyzDriver = userRepository.findByEmailAndVendorId("driver1@xyzlogistics.com", xyzLogistics.getId()).orElseThrow();
+//        Vendor gfsTracking = userRepository.findByEmailAndVendorId("tracking@globalfreight.com", globalFreight.getId()).orElseThrow();
 
         // ABC Transport Co. Locks
         createLock("ABC-L001", Lock.Status.AVAILABLE, null, abcTransport.getId());
-        createLock("ABC-L002", Lock.Status.IN_TRANSIT, abcTracking.getId(), abcTransport.getId());
-        createLock("ABC-L003", Lock.Status.ON_REVERSE_TRANSIT, abcDriver.getId(), abcTransport.getId());
+//        createLock("ABC-L002", Lock.Status.IN_TRANSIT, abcTracking.getId(), abcTransport.getId());
+//        createLock("ABC-L003", Lock.Status.ON_REVERSE_TRANSIT, abcDriver.getId(), abcTransport.getId());
         createLock("ABC-L004", Lock.Status.REACHED, null, abcTransport.getId());
         createLock("ABC-L005", Lock.Status.AVAILABLE, null, abcTransport.getId());
 
         // XYZ Logistics Locks
         createLock("XYZ-L001", Lock.Status.AVAILABLE, null, xyzLogistics.getId());
-        createLock("XYZ-L002", Lock.Status.IN_TRANSIT, xyzTracking.getId(), xyzLogistics.getId());
+//        createLock("XYZ-L002", Lock.Status.IN_TRANSIT, xyzTracking.getId(), xyzLogistics.getId());
         createLock("XYZ-L003", Lock.Status.AVAILABLE, null, xyzLogistics.getId());
         createLock("XYZ-L004", Lock.Status.REACHED, null, xyzLogistics.getId());
-        createLock("XYZ-L005", Lock.Status.ON_REVERSE_TRANSIT, xyzDriver.getId(), xyzLogistics.getId());
-        createLock("XYZ-L006", Lock.Status.IN_TRANSIT, xyzTracking.getId(), xyzLogistics.getId());
+//        createLock("XYZ-L005", Lock.Status.ON_REVERSE_TRANSIT, xyzDriver.getId(), xyzLogistics.getId());
+//        createLock("XYZ-L006", Lock.Status.IN_TRANSIT, xyzTracking.getId(), xyzLogistics.getId());
 
         // Global Freight Services Locks
         createLock("GFS-L001", Lock.Status.AVAILABLE, null, globalFreight.getId());
-        createLock("GFS-L002", Lock.Status.IN_TRANSIT, gfsTracking.getId(), globalFreight.getId());
+//        createLock("GFS-L002", Lock.Status.IN_TRANSIT, gfsTracking.getId(), globalFreight.getId());
         createLock("GFS-L003", Lock.Status.AVAILABLE, null, globalFreight.getId());
         createLock("GFS-L004", Lock.Status.REACHED, null, globalFreight.getId());
 
@@ -209,24 +209,24 @@ public class DataInitializer implements CommandLineRunner {
         Vendor xyzLogistics = vendorRepository.findByVendorCode("XYZ002").orElseThrow();
         Vendor globalFreight = vendorRepository.findByVendorCode("GFS003").orElseThrow();
 
-        User abcAdmin = userRepository.findByEmailAndVendorId("admin@abctransport.com", abcTransport.getId()).orElseThrow();
-        User abcSuper = userRepository.findByEmailAndVendorId("super@abctransport.com", abcTransport.getId()).orElseThrow();
-        User xyzAdmin = userRepository.findByEmailAndVendorId("admin@xyzlogistics.com", xyzLogistics.getId()).orElseThrow();
-        User gfsAdmin = userRepository.findByEmailAndVendorId("admin@globalfreight.com", globalFreight.getId()).orElseThrow();
-        User gfsSuper = userRepository.findByEmailAndVendorId("super@globalfreight.com", globalFreight.getId()).orElseThrow();
+//        Vendor abcAdmin = userRepository.findByEmailAndVendorId("admin@abctransport.com", abcTransport.getId()).orElseThrow();
+//        Vendor abcSuper = userRepository.findByEmailAndVendorId("super@abctransport.com", abcTransport.getId()).orElseThrow();
+//        Vendor xyzAdmin = userRepository.findByEmailAndVendorId("admin@xyzlogistics.com", xyzLogistics.getId()).orElseThrow();
+//        Vendor gfsAdmin = userRepository.findByEmailAndVendorId("admin@globalfreight.com", globalFreight.getId()).orElseThrow();
+//        Vendor gfsSuper = userRepository.findByEmailAndVendorId("super@globalfreight.com", globalFreight.getId()).orElseThrow();
 
         // ABC Transport Schedules
-        createSchedule(LocalDate.now().plusDays(1), "ABC Transport - Regular delivery route", abcAdmin.getId(), abcTransport.getId());
-        createSchedule(LocalDate.now().plusDays(2), "ABC Transport - Priority shipment", abcAdmin.getId(), abcTransport.getId());
-        createSchedule(LocalDate.now().plusDays(3), "ABC Transport - Weekend operations", abcSuper.getId(), abcTransport.getId());
+//        createSchedule(LocalDate.now().plusDays(1), "ABC Transport - Regular delivery route", abcAdmin.getId(), abcTransport.getId());
+//        createSchedule(LocalDate.now().plusDays(2), "ABC Transport - Priority shipment", abcAdmin.getId(), abcTransport.getId());
+//        createSchedule(LocalDate.now().plusDays(3), "ABC Transport - Weekend operations", abcSuper.getId(), abcTransport.getId());
 
         // XYZ Logistics Schedules
-        createSchedule(LocalDate.now().plusDays(1), "XYZ Logistics - Express delivery service", xyzAdmin.getId(), xyzLogistics.getId());
-        createSchedule(LocalDate.now().plusDays(2), "XYZ Logistics - International shipment", xyzAdmin.getId(), xyzLogistics.getId());
+//        createSchedule(LocalDate.now().plusDays(1), "XYZ Logistics - Express delivery service", xyzAdmin.getId(), xyzLogistics.getId());
+//        createSchedule(LocalDate.now().plusDays(2), "XYZ Logistics - International shipment", xyzAdmin.getId(), xyzLogistics.getId());
 
         // Global Freight Schedules
-        createSchedule(LocalDate.now().plusDays(1), "Global Freight - International cargo route", gfsAdmin.getId(), globalFreight.getId());
-        createSchedule(LocalDate.now().plusDays(4), "Global Freight - Holiday special delivery", gfsSuper.getId(), globalFreight.getId());
+//        createSchedule(LocalDate.now().plusDays(1), "Global Freight - International cargo route", gfsAdmin.getId(), globalFreight.getId());
+//        createSchedule(LocalDate.now().plusDays(4), "Global Freight - Holiday special delivery", gfsSuper.getId(), globalFreight.getId());
 
         logger.info("Created {} schedules", scheduleRepository.count());
     }
@@ -244,12 +244,12 @@ public class DataInitializer implements CommandLineRunner {
         logger.info("Creating trips...");
 
         // Get some locks and schedules for trip creation
-        Lock abcLock2 = lockRepository.findByLockNumberAndVendorId("ABC-L002", 
-            vendorRepository.findByVendorCode("ABC001").orElseThrow().getId()).orElseThrow();
-        Lock abcLock3 = lockRepository.findByLockNumberAndVendorId("ABC-L003", 
-            vendorRepository.findByVendorCode("ABC001").orElseThrow().getId()).orElseThrow();
-        Lock xyzLock2 = lockRepository.findByLockNumberAndVendorId("XYZ-L002", 
-            vendorRepository.findByVendorCode("XYZ002").orElseThrow().getId()).orElseThrow();
+//        Lock abcLock2 = lockRepository.findByLockNumberAndVendorId("ABC-L002", 
+//            vendorRepository.findByVendorCode("ABC001").orElseThrow().getId()).orElseThrow();
+//        Lock abcLock3 = lockRepository.findByLockNumberAndVendorId("ABC-L003", 
+//            vendorRepository.findByVendorCode("ABC001").orElseThrow().getId()).orElseThrow();
+//        Lock xyzLock2 = lockRepository.findByLockNumberAndVendorId("XYZ-L002", 
+//            vendorRepository.findByVendorCode("XYZ002").orElseThrow().getId()).orElseThrow();
 
         Schedule abcSchedule = scheduleRepository.findByVendorIdOrderByDateDesc(
             vendorRepository.findByVendorCode("ABC001").orElseThrow().getId()).get(0);
@@ -257,9 +257,9 @@ public class DataInitializer implements CommandLineRunner {
             vendorRepository.findByVendorCode("XYZ002").orElseThrow().getId()).get(0);
 
         // Create active trips
-        createTrip(abcLock2.getId(), abcSchedule.getId(), abcLock2.getVendorId(), 28.5, 45, Trip.Status.ACTIVE);
-        createTrip(abcLock3.getId(), abcSchedule.getId(), abcLock3.getVendorId(), 18.2, 30, Trip.Status.ACTIVE);
-        createTrip(xyzLock2.getId(), xyzSchedule.getId(), xyzLock2.getVendorId(), 42.1, 60, Trip.Status.ACTIVE);
+//        createTrip(abcLock2.getId(), abcSchedule.getId(), abcLock2.getVendorId(), 28.5, 45, Trip.Status.ACTIVE);
+//        createTrip(abcLock3.getId(), abcSchedule.getId(), abcLock3.getVendorId(), 18.2, 30, Trip.Status.ACTIVE);
+//        createTrip(xyzLock2.getId(), xyzSchedule.getId(), xyzLock2.getVendorId(), 42.1, 60, Trip.Status.ACTIVE);
 
         // Create completed trip
         Trip completedTrip = new Trip();
@@ -296,41 +296,41 @@ public class DataInitializer implements CommandLineRunner {
         Vendor xyzLogistics = vendorRepository.findByVendorCode("XYZ002").orElseThrow();
         Vendor globalFreight = vendorRepository.findByVendorCode("GFS003").orElseThrow();
 
-        User abcAdmin = userRepository.findByEmailAndVendorId("admin@abctransport.com", abcTransport.getId()).orElseThrow();
-        User abcTracking = userRepository.findByEmailAndVendorId("tracking@abctransport.com", abcTransport.getId()).orElseThrow();
-        User abcDriver = userRepository.findByEmailAndVendorId("driver1@abctransport.com", abcTransport.getId()).orElseThrow();
-        User xyzTracking = userRepository.findByEmailAndVendorId("tracking@xyzlogistics.com", xyzLogistics.getId()).orElseThrow();
-        User xyzDriver = userRepository.findByEmailAndVendorId("driver1@xyzlogistics.com", xyzLogistics.getId()).orElseThrow();
-        User gfsTracking = userRepository.findByEmailAndVendorId("tracking@globalfreight.com", globalFreight.getId()).orElseThrow();
-        User gfsAdmin = userRepository.findByEmailAndVendorId("admin@globalfreight.com", globalFreight.getId()).orElseThrow();
+//        Vendor abcAdmin = userRepository.findByEmailAndVendorId("admin@abctransport.com", abcTransport.getId()).orElseThrow();
+//        Vendor abcTracking = userRepository.findByEmailAndVendorId("tracking@abctransport.com", abcTransport.getId()).orElseThrow();
+//        Vendor abcDriver = userRepository.findByEmailAndVendorId("driver1@abctransport.com", abcTransport.getId()).orElseThrow();
+//        Vendor xyzTracking = userRepository.findByEmailAndVendorId("tracking@xyzlogistics.com", xyzLogistics.getId()).orElseThrow();
+//        Vendor xyzDriver = userRepository.findByEmailAndVendorId("driver1@xyzlogistics.com", xyzLogistics.getId()).orElseThrow();
+//        Vendor gfsTracking = userRepository.findByEmailAndVendorId("tracking@globalfreight.com", globalFreight.getId()).orElseThrow();
+//        Vendor gfsAdmin = userRepository.findByEmailAndVendorId("admin@globalfreight.com", globalFreight.getId()).orElseThrow();
 
-        Lock abcLock1 = lockRepository.findByLockNumberAndVendorId("ABC-L001", abcTransport.getId()).orElseThrow();
-        Lock abcLock2 = lockRepository.findByLockNumberAndVendorId("ABC-L002", abcTransport.getId()).orElseThrow();
-        Lock abcLock3 = lockRepository.findByLockNumberAndVendorId("ABC-L003", abcTransport.getId()).orElseThrow();
-        Lock xyzLock2 = lockRepository.findByLockNumberAndVendorId("XYZ-L002", xyzLogistics.getId()).orElseThrow();
-        Lock xyzLock5 = lockRepository.findByLockNumberAndVendorId("XYZ-L005", xyzLogistics.getId()).orElseThrow();
-        Lock gfsLock2 = lockRepository.findByLockNumberAndVendorId("GFS-L002", globalFreight.getId()).orElseThrow();
-        Lock gfsLock4 = lockRepository.findByLockNumberAndVendorId("GFS-L004", globalFreight.getId()).orElseThrow();
+//        Lock abcLock1 = lockRepository.findByLockNumberAndVendorId("ABC-L001", abcTransport.getId()).orElseThrow();
+//        Lock abcLock2 = lockRepository.findByLockNumberAndVendorId("ABC-L002", abcTransport.getId()).orElseThrow();
+//        Lock abcLock3 = lockRepository.findByLockNumberAndVendorId("ABC-L003", abcTransport.getId()).orElseThrow();
+//        Lock xyzLock2 = lockRepository.findByLockNumberAndVendorId("XYZ-L002", xyzLogistics.getId()).orElseThrow();
+//        Lock xyzLock5 = lockRepository.findByLockNumberAndVendorId("XYZ-L005", xyzLogistics.getId()).orElseThrow();
+//        Lock gfsLock2 = lockRepository.findByLockNumberAndVendorId("GFS-L002", globalFreight.getId()).orElseThrow();
+//        Lock gfsLock4 = lockRepository.findByLockNumberAndVendorId("GFS-L004", globalFreight.getId()).orElseThrow();
 
         // ABC Transport remarks
-        createRemark(abcLock1.getId(), abcAdmin.getId(), abcAdmin.getName(), 
-            "ABC Lock inspected and ready for deployment", abcTransport.getId(), LocalDateTime.now().minusHours(1));
-        createRemark(abcLock2.getId(), abcTracking.getId(), abcTracking.getName(), 
-            "ABC Transport - Started transit to downtown warehouse", abcTransport.getId(), LocalDateTime.now().minusMinutes(30));
-        createRemark(abcLock3.getId(), abcDriver.getId(), abcDriver.getName(), 
-            "ABC Transport - On reverse route, ETA 1.5 hours", abcTransport.getId(), LocalDateTime.now().minusMinutes(15));
-
-        // XYZ Logistics remarks
-        createRemark(xyzLock2.getId(), xyzTracking.getId(), xyzTracking.getName(), 
-            "XYZ Logistics - Express route initiated", xyzLogistics.getId(), LocalDateTime.now().minusMinutes(45));
-        createRemark(xyzLock5.getId(), xyzDriver.getId(), xyzDriver.getName(), 
-            "XYZ Logistics - Return journey in progress", xyzLogistics.getId(), LocalDateTime.now().minusMinutes(20));
-
-        // Global Freight remarks
-        createRemark(gfsLock2.getId(), gfsTracking.getId(), gfsTracking.getName(), 
-            "Global Freight - International shipment en route", globalFreight.getId(), LocalDateTime.now().minusMinutes(30));
-        createRemark(gfsLock4.getId(), gfsAdmin.getId(), gfsAdmin.getName(), 
-            "Global Freight - Delivery completed successfully", globalFreight.getId(), LocalDateTime.now().minusMinutes(10));
+//        createRemark(abcLock1.getId(), abcAdmin.getId(), abcAdmin.getVendorName(), 
+//            "ABC Lock inspected and ready for deployment", abcTransport.getId(), LocalDateTime.now().minusHours(1));
+//        createRemark(abcLock2.getId(), abcTracking.getId(), abcTracking.getVendorName(), 
+//            "ABC Transport - Started transit to downtown warehouse", abcTransport.getId(), LocalDateTime.now().minusMinutes(30));
+//        createRemark(abcLock3.getId(), abcDriver.getId(), abcDriver.getVendorName(), 
+//            "ABC Transport - On reverse route, ETA 1.5 hours", abcTransport.getId(), LocalDateTime.now().minusMinutes(15));
+//
+//        // XYZ Logistics remarks
+//        createRemark(xyzLock2.getId(), xyzTracking.getId(), xyzTracking.getVendorName(), 
+//            "XYZ Logistics - Express route initiated", xyzLogistics.getId(), LocalDateTime.now().minusMinutes(45));
+//        createRemark(xyzLock5.getId(), xyzDriver.getId(), xyzDriver.getVendorName(), 
+//            "XYZ Logistics - Return journey in progress", xyzLogistics.getId(), LocalDateTime.now().minusMinutes(20));
+//
+//        // Global Freight remarks
+//        createRemark(gfsLock2.getId(), gfsTracking.getId(), gfsTracking.getVendorName(), 
+//            "Global Freight - International shipment en route", globalFreight.getId(), LocalDateTime.now().minusMinutes(30));
+//        createRemark(gfsLock4.getId(), gfsAdmin.getId(), gfsAdmin.getVendorName(), 
+//            "Global Freight - Delivery completed successfully", globalFreight.getId(), LocalDateTime.now().minusMinutes(10));
 
         logger.info("Created {} remarks", remarkRepository.count());
     }

@@ -71,6 +71,7 @@ public class AuthController {
                     userDetails.getVendorId(),
                     vendorName));
         } catch (Exception e) {
+        	e.printStackTrace();
             logger.error("Authentication failed for user: {}, error: {}", loginRequest.getEmail(), e.getMessage());
             return ResponseEntity.badRequest()
                     .body(new MessageResponse("Error: Invalid credentials!"));
@@ -108,7 +109,7 @@ public class AuthController {
             
             // Default role is TRACKING - only superadmin can change roles
             user.setRole(User.Role.TRACKING);
-            user.setIsActive(false); // Inactive by default, superadmin must activate
+            user.setIsActive(true); // Inactive by default, superadmin must activate
 
             // Set additional fields if provided
             if (signUpRequest.getPhone() != null && !signUpRequest.getPhone().trim().isEmpty()) {
