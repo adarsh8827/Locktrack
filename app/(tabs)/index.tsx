@@ -76,7 +76,6 @@ export default function DashboardScreen() {
             try {
               await signOut();
               router.replace('/signoutin');
-              // Alert.alert('Success', 'You have been signed out successfully.', [{ text: 'OK' }]);
             } catch (error) {
               console.error('Sign out error:', error);
               Alert.alert('Error', 'Failed to sign out. Please try again.', [{ text: 'OK' }]);
@@ -481,11 +480,11 @@ export default function DashboardScreen() {
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.headerContent}>
-          <View>
-            <Text style={styles.headerTitle}>
+          <View style={styles.headerLeft}>
+            <Text style={styles.headerTitle} numberOfLines={1} adjustsFontSizeToFit>
               Welcome, {user?.name || 'User'}
             </Text>
-            <Text style={styles.headerSubtitle}>
+            <Text style={styles.headerSubtitle} numberOfLines={1}>
               {user?.vendorId === '1' ? 'System Administrator' : user?.vendorName}
             </Text>
           </View>
@@ -549,18 +548,23 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+  headerLeft: {
+    flex: 1,
+    marginRight: 10,
+  },
   headerTitle: {
-    fontSize: 24,
+    fontSize: width < 400 ? 20 : 24,
     fontWeight: 'bold',
     color: '#2d3748',
   },
   headerSubtitle: {
-    fontSize: 14,
+    fontSize: width < 400 ? 12 : 14,
     color: '#718096',
     marginTop: 4,
   },
   headerRight: {
     alignItems: 'flex-end',
+    flexShrink: 0,
   },
   systemHeaderBadge: {
     flexDirection: 'row',

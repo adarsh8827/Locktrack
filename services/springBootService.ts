@@ -164,6 +164,16 @@ export const springAuthService = {
     }
   },
 
+  // Lock assignment function
+  assignLock: async (lockId: string, userId: string): Promise<void> => {
+    try {
+      await locksAPI.assign(parseInt(lockId), parseInt(userId));
+    } catch (error: any) {
+      console.error('Assign lock error:', error);
+      throw new Error(error.message || 'Failed to assign lock');
+    }
+  },
+
   // Vendor management functions
   getAllVendors: async (): Promise<Vendor[]> => {
     try {
@@ -181,6 +191,65 @@ export const springAuthService = {
     } catch (error: any) {
       console.error('Get all vendors error:', error);
       throw new Error(error.message || 'Failed to fetch vendors');
+    }
+  },
+
+  createVendor: async (vendorData: {
+    vendorName: string;
+    vendorCode: string;
+    description?: string;
+    contactEmail: string;
+    contactPhone?: string;
+  }): Promise<Vendor> => {
+    try {
+      const response = await vendorsAPI.create(vendorData);
+      return {
+        id: response.id.toString(),
+        vendorName: response.vendorName,
+        vendorCode: response.vendorCode,
+        description: response.description,
+        contactEmail: response.contactEmail,
+        contactPhone: response.contactPhone,
+        isActive: response.isActive,
+        createdAt: new Date(response.createdAt),
+      };
+    } catch (error: any) {
+      console.error('Create vendor error:', error);
+      throw new Error(error.message || 'Failed to create vendor');
+    }
+  },
+
+  updateVendor: async (vendorId: string, vendorData: {
+    vendorName: string;
+    vendorCode: string;
+    description?: string;
+    contactEmail: string;
+    contactPhone?: string;
+  }): Promise<Vendor> => {
+    try {
+      const response = await vendorsAPI.update(parseInt(vendorId), vendorData);
+      return {
+        id: response.id.toString(),
+        vendorName: response.vendorName,
+        vendorCode: response.vendorCode,
+        description: response.description,
+        contactEmail: response.contactEmail,
+        contactPhone: response.contactPhone,
+        isActive: response.isActive,
+        createdAt: new Date(response.createdAt),
+      };
+    } catch (error: any) {
+      console.error('Update vendor error:', error);
+      throw new Error(error.message || 'Failed to update vendor');
+    }
+  },
+
+  deactivateVendor: async (vendorId: string): Promise<void> => {
+    try {
+      await vendorsAPI.delete(parseInt(vendorId));
+    } catch (error: any) {
+      console.error('Deactivate vendor error:', error);
+      throw new Error(error.message || 'Failed to deactivate vendor');
     }
   },
 };

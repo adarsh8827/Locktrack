@@ -94,7 +94,7 @@ export default function UsersScreen() {
       setEditModalVisible(false);
       setSelectedUser(null);
       setNewRole('');
-      await loadUsers();
+      await loadUsers(); // Reload users to reflect changes
       Alert.alert('Success! 🎉', `User role has been successfully updated to ${newRole.toUpperCase()}.`, [{ text: 'OK' }]);
     } catch (error: any) {
       Alert.alert('Error', error.message || 'Failed to update user role', [{ text: 'OK' }]);
@@ -106,7 +106,7 @@ export default function UsersScreen() {
   const handleActivateUser = async (userData: User) => {
     try {
       await springAuthService.activateUser(userData.id);
-      await loadUsers();
+      await loadUsers(); // Reload users to reflect changes
       Alert.alert('Success! ✅', `${userData.name} has been successfully activated and can now login.`, [{ text: 'OK' }]);
     } catch (error: any) {
       Alert.alert('Error', error.message || 'Failed to activate user', [{ text: 'OK' }]);
@@ -125,7 +125,7 @@ export default function UsersScreen() {
           onPress: async () => {
             try {
               await springAuthService.deactivateUser(userData.id);
-              await loadUsers();
+              await loadUsers(); // Reload users to reflect changes
               Alert.alert('Success! ⚠️', `${userData.name} has been deactivated and can no longer login.`, [{ text: 'OK' }]);
             } catch (error: any) {
               Alert.alert('Error', error.message || 'Failed to deactivate user', [{ text: 'OK' }]);
@@ -148,7 +148,7 @@ export default function UsersScreen() {
           onPress: async () => {
             try {
               await springAuthService.deleteUser(userData.id);
-              await loadUsers();
+              await loadUsers(); // Reload users to reflect changes
               Alert.alert('Success! 🗑️', `${userData.name} has been permanently deleted from the system.`, [{ text: 'OK' }]);
             } catch (error: any) {
               Alert.alert('Error', error.message || 'Failed to delete user', [{ text: 'OK' }]);
@@ -283,8 +283,12 @@ export default function UsersScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>User Management</Text>
-        <Text style={styles.headerSubtitle}>System-wide user administration</Text>
+        <View style={styles.headerContent}>
+          <View style={styles.headerLeft}>
+            <Text style={styles.headerTitle}>User Management</Text>
+            <Text style={styles.headerSubtitle}>System-wide user administration</Text>
+          </View>
+        </View>
       </View>
 
       <ScrollView
@@ -419,6 +423,14 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#e9ecef',
     zIndex: 1000,
+  },
+  headerContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  headerLeft: {
+    flex: 1,
   },
   headerTitle: {
     fontSize: 24,

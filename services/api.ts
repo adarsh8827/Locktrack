@@ -23,7 +23,7 @@ export const setAuthToken = (token: string | null) => {
 
 export const getAuthToken = () => authToken;
 
-// API request helper
+// API request helper with better error handling
 const apiRequest = async (endpoint: string, options: RequestInit = {}) => {
   const url = `${BASE_URL}${endpoint}`;
   
@@ -47,14 +47,29 @@ const apiRequest = async (endpoint: string, options: RequestInit = {}) => {
     console.log(`API Response status: ${response.status}`);
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`API Error: ${errorText}`);
-      throw new Error(errorText || `HTTP error! status: ${response.status}`);
+      let errorMessage = `HTTP error! status: ${response.status}`;
+      try {
+        const errorText = await response.text();
+        if (errorText) {
+          errorMessage = errorText;
+        }
+      } catch (e) {
+        // If we can't read the error text, use the status
+      }
+      console.error(`API Error: ${errorMessage}`);
+      throw new Error(errorMessage);
     }
 
-    const data = await response.json();
-    console.log('API Response data:', data);
-    return data;
+    // Handle empty responses
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      const data = await response.json();
+      console.log('API Response data:', data);
+      return data;
+    } else {
+      // For non-JSON responses (like 204 No Content), return empty object
+      return {};
+    }
   } catch (error) {
     console.error('API Request failed:', error);
     throw error;

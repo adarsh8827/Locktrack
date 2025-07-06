@@ -9,11 +9,11 @@ import {
   TextInput,
   Alert,
   RefreshControl,
+  ActivityIndicator,
 } from 'react-native';
-import { Building2, Plus, X, CreditCard as Edit3, Trash2, Users, Lock, TrendingUp, Phone, Mail, Calendar, Shield } from 'lucide-react-native';
+import { Building2, Plus, X, Edit3, Trash2, Users, Lock, TrendingUp, Phone, Mail, Calendar, Shield } from 'lucide-react-native';
 import { useAuth } from '@/contexts/AuthContext';
-import { dummyAuthService, DEMO_VENDORS } from '@/services/dummyAuthService';
-import { getVendorData } from '@/services/dummyDataService';
+import { springAuthService } from '@/services/springBootService';
 import { Vendor } from '@/types';
 
 export default function VendorsScreen() {
@@ -37,10 +37,12 @@ export default function VendorsScreen() {
 
   const loadVendors = async () => {
     try {
-      const vendorsData = dummyAuthService.getAllVendors();
-      setVendors(vendorsData);
+      const vendorsData = await springAuthService.getAllVendors();
+      // Filter out system vendor (ID: 1) and show all vendors for system admin
+      setVendors(vendorsData.filter(v => v.id !== '1'));
     } catch (error) {
       console.error('Error loading vendors:', error);
+      Alert.alert('Error', 'Failed to load vendors');
     }
   };
 
@@ -88,22 +90,21 @@ export default function VendorsScreen() {
         description: description.trim(),
         contactEmail: contactEmail.trim(),
         contactPhone: contactPhone.trim(),
-        isActive: true,
       };
 
       if (editingVendor) {
-        dummyAuthService.updateVendor(editingVendor.id, vendorData);
-        Alert.alert('Success', 'Vendor updated successfully');
+        await springAuthService.updateVendor(editingVendor.id, vendorData);
+        Alert.alert('Success! 🎉', 'Vendor updated successfully', [{ text: 'OK' }]);
       } else {
-        dummyAuthService.addVendor(vendorData);
-        Alert.alert('Success', 'Vendor added successfully');
+        await springAuthService.createVendor(vendorData);
+        Alert.alert('Success! 🎉', 'Vendor added successfully', [{ text: 'OK' }]);
       }
 
       setModalVisible(false);
       resetForm();
       loadVendors();
-    } catch (error) {
-      Alert.alert('Error', 'Failed to save vendor');
+    } catch (error: any) {
+      Alert.alert('Error', error.message || 'Failed to save vendor');
     } finally {
       setLoading(false);
     }
@@ -118,32 +119,21 @@ export default function VendorsScreen() {
         {
           text: 'Deactivate',
           style: 'destructive',
-          onPress: () => {
-            dummyAuthService.deactivateVendor(vendor.id);
-            loadVendors();
-            Alert.alert('Success', 'Vendor deactivated successfully');
+          onPress: async () => {
+            try {
+              await springAuthService.deactivateVendor(vendor.id);
+              loadVendors();
+              Alert.alert('Success! ⚠️', 'Vendor deactivated successfully', [{ text: 'OK' }]);
+            } catch (error: any) {
+              Alert.alert('Error', error.message || 'Failed to deactivate vendor');
+            }
           },
         },
       ]
     );
   };
 
-  const getVendorStats = (vendorId: string) => {
-    const vendorData = getVendorData(vendorId);
-    const users = dummyAuthService.getUsersByVendor(vendorId);
-    
-    return {
-      totalLocks: vendorData.locks.length,
-      activeLocks: vendorData.locks.filter(lock => 
-        lock.status === 'in_transit' || lock.status === 'on_reverse_transit'
-      ).length,
-      totalUsers: users.length,
-      totalTrips: vendorData.trips.length,
-    };
-  };
-
   const renderVendorCard = (vendor: Vendor) => {
-    const stats = getVendorStats(vendor.id);
     const isActive = vendor.isActive;
 
     return (
@@ -205,39 +195,20 @@ export default function VendorsScreen() {
             </Text>
           </View>
         </View>
-
-        <View style={styles.statsContainer}>
-          <View style={styles.statItem}>
-            <Lock size={20} color="#667eea" />
-            <Text style={styles.statValue}>{stats.totalLocks}</Text>
-            <Text style={styles.statLabel}>Total Locks</Text>
-          </View>
-          <View style={styles.statItem}>
-            <TrendingUp size={20} color="#28a745" />
-            <Text style={styles.statValue}>{stats.activeLocks}</Text>
-            <Text style={styles.statLabel}>Active</Text>
-          </View>
-          <View style={styles.statItem}>
-            <Users size={20} color="#ffc107" />
-            <Text style={styles.statValue}>{stats.totalUsers}</Text>
-            <Text style={styles.statLabel}>Users</Text>
-          </View>
-          <View style={styles.statItem}>
-            <Shield size={20} color="#17a2b8" />
-            <Text style={styles.statValue}>{stats.totalTrips}</Text>
-            <Text style={styles.statLabel}>Trips</Text>
-          </View>
-        </View>
       </View>
     );
   };
 
   // Check if user is system super admin
-  if (user?.vendorId !== 'system' || user?.role !== 'superadmin') {
+  if (user?.vendorId !== '1' || user?.role !== 'superadmin') {
     return (
       <View style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Access Denied</Text>
+          <View style={styles.headerContent}>
+            <View style={styles.headerLeft}>
+              <Text style={styles.headerTitle}>Access Denied</Text>
+            </View>
+          </View>
         </View>
         <View style={styles.accessDenied}>
           <Shield size={64} color="#dc3545" />
@@ -253,10 +224,15 @@ export default function VendorsScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Vendor Management</Text>
-        <TouchableOpacity style={styles.addButton} onPress={openAddModal}>
-          <Plus size={24} color="#fff" />
-        </TouchableOpacity>
+        <View style={styles.headerContent}>
+          <View style={styles.headerLeft}>
+            <Text style={styles.headerTitle}>Vendor Management</Text>
+            <Text style={styles.headerSubtitle}>System-wide vendor administration</Text>
+          </View>
+          <TouchableOpacity style={styles.addButton} onPress={openAddModal}>
+            <Plus size={24} color="#fff" />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <ScrollView
@@ -379,9 +355,13 @@ export default function VendorsScreen() {
                 onPress={handleSaveVendor}
                 disabled={loading}
               >
-                <Text style={styles.saveButtonText}>
-                  {loading ? 'Saving...' : editingVendor ? 'Update Vendor' : 'Add Vendor'}
-                </Text>
+                {loading ? (
+                  <ActivityIndicator size="small" color="#fff" />
+                ) : (
+                  <Text style={styles.saveButtonText}>
+                    {editingVendor ? 'Update Vendor' : 'Add Vendor'}
+                  </Text>
+                )}
               </TouchableOpacity>
             </ScrollView>
           </View>
@@ -397,20 +377,31 @@ const styles = StyleSheet.create({
     backgroundColor: '#f8f9fa',
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
     paddingTop: 60,
     paddingHorizontal: 20,
     paddingBottom: 20,
     backgroundColor: '#fff',
     borderBottomWidth: 1,
     borderBottomColor: '#e9ecef',
+    zIndex: 1000,
+  },
+  headerContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  headerLeft: {
+    flex: 1,
   },
   headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#212529',
+  },
+  headerSubtitle: {
+    fontSize: 14,
+    color: '#6c757d',
+    marginTop: 5,
   },
   addButton: {
     backgroundColor: '#667eea',
@@ -532,7 +523,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#f8f9fa',
   },
   contactInfo: {
-    marginBottom: 15,
     paddingTop: 15,
     borderTopWidth: 1,
     borderTopColor: '#e9ecef',
@@ -546,27 +536,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#495057',
     marginLeft: 8,
-  },
-  statsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingTop: 15,
-    borderTopWidth: 1,
-    borderTopColor: '#e9ecef',
-  },
-  statItem: {
-    alignItems: 'center',
-  },
-  statValue: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#212529',
-    marginTop: 5,
-  },
-  statLabel: {
-    fontSize: 12,
-    color: '#6c757d',
-    marginTop: 2,
   },
   emptyState: {
     alignItems: 'center',
